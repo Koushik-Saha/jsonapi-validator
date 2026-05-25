@@ -45,3 +45,6 @@ vitest-ctrf/
 playwright-report/
 ctrf/
 test-results/
+
+# Claude Code
+.claude/

@@ -437,7 +437,7 @@ function validateErrorLinkValue(link: unknown, context: string): ValidationResul
         // Validate meta member names follow JSON:API naming conventions
         const metaKeys = Object.keys(linkObject.meta as Record<string, unknown>)
         for (const metaName of metaKeys) {
-          const nameValidation = validateMemberName(metaName, `${context}.meta.${metaName}`) as any
+          const nameValidation = validateMemberName(metaName, `${context}.meta.${metaName}`) as ValidationResult
           results.details.push(...nameValidation.details)
           if (!nameValidation.valid) {
             results.valid = false
@@ -858,7 +858,7 @@ function validateErrorMetaMember(meta: unknown, context: string): ValidationResu
 
     // Validate each meta member name follows JSON:API naming conventions
     for (const metaName of metaKeys) {
-      const nameValidation = validateMemberName(metaName, `${context}.meta.${metaName}`) as any
+      const nameValidation = validateMemberName(metaName, `${context}.meta.${metaName}`) as ValidationResult
       results.details.push(...nameValidation.details)
       if (!nameValidation.valid) {
         results.valid = false

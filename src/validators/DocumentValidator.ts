@@ -48,6 +48,17 @@ interface LinkObject {
 
 type Link = string | LinkObject | null
 
+interface RelationshipData {
+  type: string
+  id: string
+}
+
+interface RelationshipObject {
+  data?: RelationshipData | RelationshipData[] | null
+  links?: Record<string, unknown>
+  meta?: Record<string, unknown>
+}
+
 /**
  * Validates a JSON:API document's top-level structure
  * @param response - The response object to validate
@@ -137,7 +148,7 @@ export function validateDocument(response: unknown): ValidationResult {
 
   // Step 4b: Validate errors structure if present
   if (hasErrors) {
-    const errorsValidation = validateErrorsMember(doc.errors) as any
+    const errorsValidation = validateErrorsMember(doc.errors) as ValidationResult
     results.details.push(...errorsValidation.details)
     if (!errorsValidation.valid) {
       results.valid = false
@@ -278,7 +289,7 @@ function validateDataMember(data: JsonApiResource | JsonApiResource[] | null | u
       })
     } else {
       // Validate resource collection using comprehensive ResourceValidator
-      const collectionValidation = validateResourceCollection(data, { context: 'data' } as any) as ValidationResult
+      const collectionValidation = validateResourceCollection(data, { context: 'data' }) as ValidationResult
       results.details.push(...collectionValidation.details)
       if (!collectionValidation.valid) {
         results.valid = false
@@ -290,7 +301,7 @@ function validateDataMember(data: JsonApiResource | JsonApiResource[] | null | u
     }
   } else if (typeof data === 'object') {
     // Single resource object - use comprehensive ResourceValidator
-    const resourceValidation = validateResourceObject(data, { context: 'data' } as any) as ValidationResult
+    const resourceValidation = validateResourceObject(data, { context: 'data' }) as ValidationResult
     results.details.push(...resourceValidation.details)
     if (!resourceValidation.valid) {
       results.valid = false
@@ -340,7 +351,7 @@ function validateIncludedMember(included: unknown): ValidationResult {
   }
 
   // Validate each resource in included array using comprehensive ResourceValidator
-  const collectionValidation = validateResourceCollection(included as JsonApiResource[], { context: 'included' } as any) as ValidationResult
+  const collectionValidation = validateResourceCollection(included as JsonApiResource[], { context: 'included' }) as ValidationResult
   results.details.push(...collectionValidation.details)
   if (!collectionValidation.valid) {
     results.valid = false
@@ -1111,10 +1122,10 @@ function extractReferencedResources(data: JsonApiResource | JsonApiResource[] | 
 
   resources.forEach(resource => {
     if (resource && typeof resource === 'object' && resource.relationships) {
-      Object.values(resource.relationships).forEach((relationship: any) => {
+      Object.values(resource.relationships as Record<string, RelationshipObject>).forEach((relationship) => {
         if (relationship && relationship.data) {
           const relData = Array.isArray(relationship.data) ? relationship.data : [relationship.data]
-          relData.forEach((rel: any) => {
+          relData.forEach((rel) => {
             if (rel && rel.type && rel.id) {
               references.add(`${rel.type}:${rel.id}`)
             }
@@ -1190,10 +1201,10 @@ function analyzeRelationshipStructure(allResources: Map<string, JsonApiResource>
 
   for (const [resourceKey, resource] of allResources) {
     if (resource.relationships) {
-      Object.values(resource.relationships).forEach((relationship: any) => {
+      Object.values(resource.relationships as Record<string, RelationshipObject>).forEach((relationship) => {
         if (relationship && relationship.data) {
           const relData = Array.isArray(relationship.data) ? relationship.data : [relationship.data]
-          relData.forEach((rel: any) => {
+          relData.forEach((rel) => {
             if (rel && rel.type && rel.id) {
               const relKey = `${rel.type}:${rel.id}`
               const relationshipPair = `${resourceKey}->${relKey}`

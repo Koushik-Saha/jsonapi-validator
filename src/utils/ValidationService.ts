@@ -15,7 +15,7 @@ import { validateJsonApiObjectExtended } from '../validators/JsonApiObjectValida
 import { validateContentNegotiation } from '../validators/ContentNegotiationValidator.js'
 import { validateUrlStructure } from '../validators/UrlStructureValidator.js'
 import { createComprehensiveReport } from '../utils/ValidationReporter.js'
-import type { ValidationTest, ValidationReport, JsonApiDocument } from '../types/validation.js'
+import type { ValidationTest, ValidationReport, JsonApiDocument, TestConfig } from '../types/validation.js'
 
 /**
  * Extended test config with optional fields for compatibility
@@ -142,7 +142,7 @@ export async function runValidation(config: ExtendedTestConfig): Promise<Validat
 
         // Add request validation results
         results.details.push(...requestValidation.details)
-        requestValidation.errors.forEach((error: any) => {
+        requestValidation.errors.forEach((error: { test: string; message: string }) => {
           results.details.push({
             test: error.test,
             status: 'failed',
@@ -150,7 +150,7 @@ export async function runValidation(config: ExtendedTestConfig): Promise<Validat
           })
           results.summary.failed++
         })
-        requestValidation.warnings.forEach((warning: any) => {
+        requestValidation.warnings.forEach((warning: { test: string; message: string }) => {
           results.details.push({
             test: warning.test,
             status: 'warning',
@@ -175,7 +175,7 @@ export async function runValidation(config: ExtendedTestConfig): Promise<Validat
     }
 
     // Step 5: Make the API request
-    const response = await makeRequest(config as any)
+    const response = await makeRequest(config as unknown as TestConfig)
 
     if (!response.success) {
       const errorResults: InternalValidationResults = {
@@ -412,7 +412,7 @@ export async function runValidation(config: ExtendedTestConfig): Promise<Validat
         results.details.push(...fieldsetValidation.details)
 
         // Add any errors
-        fieldsetValidation.errors.forEach((error: any) => {
+        fieldsetValidation.errors.forEach((error: { test: string; message: string }) => {
           results.details.push({
             test: error.test,
             status: 'failed',
@@ -422,7 +422,7 @@ export async function runValidation(config: ExtendedTestConfig): Promise<Validat
         })
 
         // Add any warnings
-        fieldsetValidation.warnings.forEach((warning: any) => {
+        fieldsetValidation.warnings.forEach((warning: { test: string; message: string }) => {
           results.details.push({
             test: warning.test,
             status: 'warning',
@@ -444,11 +444,11 @@ export async function runValidation(config: ExtendedTestConfig): Promise<Validat
         const paginationValidation = validatePagination(response.data, config.apiUrl, queryParams)
 
         // Add pagination validation results (filter out 'skipped' status items)
-        const validDetails = paginationValidation.details.filter((d: any) => d.status !== 'skipped') as ValidationTest[]
+        const validDetails = paginationValidation.details.filter((d: { status: string }) => d.status !== 'skipped') as ValidationTest[]
         results.details.push(...validDetails)
 
         // Add any errors
-        paginationValidation.errors.forEach((error: any) => {
+        paginationValidation.errors.forEach((error: { test: string; message: string }) => {
           results.details.push({
             test: error.test,
             status: 'failed',
@@ -458,7 +458,7 @@ export async function runValidation(config: ExtendedTestConfig): Promise<Validat
         })
 
         // Add any warnings
-        paginationValidation.warnings.forEach((warning: any) => {
+        paginationValidation.warnings.forEach((warning: { test: string; message: string }) => {
           results.details.push({
             test: warning.test,
             status: 'warning',
