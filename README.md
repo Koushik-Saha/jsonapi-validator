@@ -222,24 +222,24 @@ fi
 ```
 src/
 ├── components/                    # React UI components
-│   ├── ConfigForm.jsx            # API endpoint configuration form
-│   ├── TestRunner.jsx            # Test execution controller  
-│   ├── ResultsPanel.jsx          # Basic validation results display
-│   └── EnhancedResultsPanel.jsx  # Advanced results with export features
+│   ├── ConfigForm.tsx            # API endpoint configuration form
+│   ├── TestRunner.tsx            # Test execution controller  
+│   ├── ResultsPanel.tsx          # Basic validation results display
+│   └── EnhancedResultsPanel.tsx  # Advanced results with export features
 ├── validators/                    # JSON:API validation logic
-│   ├── DocumentValidator.js      # Document structure validation
-│   ├── ResourceValidator.js      # Resource object validation
-│   ├── ErrorValidator.js         # Error response validation
+│   ├── DocumentValidator.ts      # Document structure validation
+│   ├── ResourceValidator.ts      # Resource object validation
+│   ├── ErrorValidator.ts         # Error response validation
 │   ├── QueryValidator.ts         # Query parameter validation
-│   ├── PaginationValidator.js    # Pagination validation
+│   ├── PaginationValidator.ts    # Pagination validation
 │   └── [8 more validators...]    # Comprehensive validation suite
 ├── utils/                        # Core utilities
-│   ├── ValidationService.js      # Main validation orchestration
-│   ├── ValidationReporter.js     # Report formatting and export
-│   ├── ApiClient.js              # HTTP request client
-│   └── UrlValidator.js           # URL validation utilities
-├── App.jsx                       # Main application component
-└── main.jsx                      # Application entry point
+│   ├── ValidationService.ts      # Main validation orchestration
+│   ├── ValidationReporter.ts     # Report formatting and export
+│   ├── ApiClient.ts              # HTTP request client
+│   └── UrlValidator.ts           # URL validation utilities
+├── App.tsx                       # Main application component
+└── main.tsx                      # Application entry point
 ```
 
 ### Mock Server for Testing
